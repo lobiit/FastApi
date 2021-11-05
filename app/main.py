@@ -54,7 +54,7 @@ def get_posts(db: Session = Depends(get_db)):
     # cursor.execute(""" SELECT * FROM posts """)
     # posts = cursor.fetchall()
     posts = db.query(models.Post).all()
-    return {"data": posts}
+    return posts
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
@@ -68,7 +68,7 @@ def create_posts(post: schema.PostCreate, db: Session = Depends(get_db)):
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
-    return {"data": new_post}
+    return new_post
 
 
 # title str, content str
@@ -83,7 +83,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'post with id: {id} was not found')
         # response.status_code = status.HTTP_404_NOT_FOUND
         # return{'message': f'post with id: {id} was not found'}
-    return {"post_detail": post}
+    return post
 
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -118,4 +118,4 @@ def update_post(id: int, updated_post: schema.PostCreate, db: Session = Depends(
 
     db.commit()
 
-    return {"data": post_query.first()}
+    return post_query.first()

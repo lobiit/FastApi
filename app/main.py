@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 from fastapi.params import Body
@@ -49,7 +49,7 @@ def root():
     return {"message": "Hello John"}
 
 
-@app.get("/posts")
+@app.get("/posts", response_model=List[schema.Post])
 def get_posts(db: Session = Depends(get_db)):
     # cursor.execute(""" SELECT * FROM posts """)
     # posts = cursor.fetchall()
@@ -57,7 +57,7 @@ def get_posts(db: Session = Depends(get_db)):
     return posts
 
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schema.Post)
 def create_posts(post: schema.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute("""INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING * """,
     #               (post.title, post.content, post.published))
@@ -73,7 +73,7 @@ def create_posts(post: schema.PostCreate, db: Session = Depends(get_db)):
 
 # title str, content str
 
-@app.get("/posts/{id}")
+@app.get("/posts/{id}", response_model=schema.Post)
 def get_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute("""SELECT * FROM posts WHERE id = %s """, (str(id),))
     # post = cursor.fetchone()
@@ -100,7 +100,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@app.put("/posts/{id}")
+@app.put("/posts/{id}", response_model=schema.Post)
 def update_post(id: int, updated_post: schema.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute("""UPDATE posts  SET title= %s, content = %s, published = %s WHERE id = %s RETURNING *""",
     #              (post.title, post.content, post.published, str(id)))
